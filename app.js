@@ -13,7 +13,6 @@ var bodyParser = require('body-parser')
 
 var expressErrorHandler = require('express-error-handler');
 var expressSession = require('express-session');
-
 var app = express();
 var passport = require('passport');
 var route_loader = require('./routes/route_loader');
@@ -23,9 +22,6 @@ var flash = require('connect-flash');
 
 // 기본 속성 설정
 app.set('port', process.env.PORT || 5000);
-// body-parser를 이용해 application/x-www-form-urlencoded 파싱
-
-// V(view) 등록 
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 
@@ -38,6 +34,7 @@ app.use(expressSession({
     resave: true,
     saveUninitialized: true
 }));
+
 
 //===========pasport 사용 설정===============
 app.use(passport.initialize());
@@ -59,8 +56,6 @@ router.route('/signup').post(passport.authenticate('local-signup', {
     failureRedirect: '/signup',
     failureFlash: true
 }));
-
-
 route_loader.init(app, router);
 
 //==========================패스포트 인증모듈=================
@@ -94,6 +89,7 @@ passport.use('local-login', new LocalStrategy({
 
         // 정상인 경우
         console.log('계정과 비밀번호가 일치함.');
+        console.log(user._doc._id);
         return done(null, user);  // 검증 콜백에서 두 번째 파라미터의 값을 user 객체로 넣어 인증 성공한 것으로 처리
     });
 
