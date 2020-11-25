@@ -17,7 +17,14 @@ var config = {
         { file: './user', path: '/signup', method: 'signup', type: 'get' },
         { file: './user', path: '/logout', method: 'logout', type: 'get' },
         { file: './post', path: '/write', method: 'write', type: 'get' },
-
+        { file: './post', path: '/write', method: 'write_post', type: 'upload_post' },
+        { file: './post', path: '/post/:objectid', method: "post", type: 'get' },
+        { file: './post', path: '/modify', method: "modify_post", type: 'post' },
+        { file: './post', path: '/delete', method: "delete_post", type: 'post' },
+        { file: './post', path: '/modified', method: "modified_post", type: 'upload_post' },
+        { file: './post', path: '/list/:user_email', method: 'listByUser', type: 'get' }
     ]
 };
 module.exports = config;
+
+//path: 요청패스 , method: 요청처리 함수 type: get or post 요청방식.

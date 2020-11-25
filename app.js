@@ -28,6 +28,7 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 app.use('/public', static(path.join(__dirname, 'public')));
+app.use('/uploads', static(path.join(__dirname, 'uploads')))
 app.use(cookieParser());
 app.use(expressSession({
     secret: 'my key',
@@ -40,10 +41,10 @@ app.use(expressSession({
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
-
+//! 안되면 삭제할것
 // ===========================라우터 등록==============================
 var router = express.Router();
-// 로그인 라우터
+
 router.route('/login').post(passport.authenticate('local-login',
     {
         successRedirect: '/',
@@ -58,6 +59,15 @@ router.route('/signup').post(passport.authenticate('local-signup', {
 }));
 route_loader.init(app, router);
 
+//라우터 테스트 삭제하기
+router.route('/test').get(function (req, res) {
+    var postModel = req.app.get('database').postModel;
+    postModel.findByEmail({ email: 'jmw93@naver.com' }, function (err, results) {
+        console.log(results[0]._doc);
+        res.end();
+    });
+});
+
 //==========================패스포트 인증모듈=================
 
 var LocalStrategy = require('passport-local').Strategy;
@@ -68,7 +78,6 @@ passport.use('local-login', new LocalStrategy({
     passwordField: 'password',
     passReqToCallback: true   // 이 옵션을 설정하면 아래 콜백 함수의 첫번째 파라미터로 req 객체 전달됨
 }, function (req, email, password, done) {
-    console.log('passport의 local-login 호출됨 : ' + email + ', ' + password);
 
     var database = app.get('database');
     database.UserModel.findOne({ 'email': email }, function (err, user) {
@@ -143,16 +152,18 @@ passport.serializeUser(function (user, done) {
 });
 passport.deserializeUser(function (user, done) {
     console.log('deserializeUser() 호출됨.');
+    console.log(user);
     done(null, user);
 });
-// ===========================에러 핸들러 등록==============================
-// app.use(expressErrorHandler.httpError(404));
-// app.use(errorHandler);
-// var errorHandler = expressErrorHandler({
-//     static: {
-//         '404': './public/404.html'
-//     }
-// });
+//===========================에러 핸들러 등록==============================
+var errorHandler = expressErrorHandler({
+    static: {
+        '404': './public/404.html'
+    }
+});
+app.use(expressErrorHandler.httpError(404));
+app.use(errorHandler);
+
 app.on('close', function () { // app객체 소멸시, db연결도 같이 끊기.
     console.log("Express 객체 소멸");
     if (app.database) {

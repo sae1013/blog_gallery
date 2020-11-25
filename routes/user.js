@@ -5,11 +5,12 @@ user_module = {
 }
 // 요청패스: /home , get
 function home(req, res) {
-    context = { user: req.user }; // user 토큰정보(로그인인증정보)
-    console.log("/home호출")
-    res.render("home.ejs", { user: req.user });
-
+    var database = req.app.get('database')
+    database.PostModel.find({}, function (err, results) {
+        res.render('home.ejs', { results: results, user: req.user });
+    });
 }
+
 // /login, get
 function login(req, res) {
     // user 토큰정보(로그인인증정보)
@@ -26,6 +27,7 @@ function logout(req, res) {
     req.logout();
     res.redirect('/'); // 로그아웃시, Home으로 다시 이동하기.
 }
+
 
 //==================== 라우팅함수 모듈에 등록==================
 user_module["home"] = home;

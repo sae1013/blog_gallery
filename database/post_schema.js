@@ -4,12 +4,12 @@ Schema.createSchema = function (mongoose) {
     var PostSchema = mongoose.Schema({
         title: { type: String, trim: true, 'default': '' }
         , description: { type: String, trim: true, 'default': '' }
-        , writer: { type: mongoose.Schema.ObjectId, ref: 'users8' }
+        , writer: { type: String, index: { unique: false }, 'default': '' }
         , image: { type: String, 'default': '' }
         , created_at: { type: Date, index: { unique: false }, 'default': Date.now }
         , updated_at: { type: Date, index: { unique: false }, 'default': Date.now }
     });
-    PostSchema.static('findBywriter', function (writer, callback) {
+    PostSchema.static('findByEmail', function (writer, callback) {
         return this.find({ writer: writer }, callback);
     }); // 사용자 id에 걸려있는 게시물 찾기.
 
@@ -20,7 +20,5 @@ Schema.createSchema = function (mongoose) {
 
     return PostSchema;
 }
-
-
 
 module.exports = Schema;
